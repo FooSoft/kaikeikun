@@ -29,41 +29,46 @@ function walletCoins(wallet) {
     return total;
 }
 
-function bestCoinsForPrice(price, denoms) {
-    return walletCoins(bestChangeForPrice(price, denoms));
+function fewestCoins(price, currency) {
+    return walletCoins(fewestCoinChange(price, currency));
 }
 
-function bestChangeForPrice(price, denoms) {
+function fewestCoinChange(price, currency) {
     console.assert(price >= 0);
 
     var change = {};
-    for (var i = 0; i < denoms.length; ++i) {
-        var denom = denoms[i];
-        change[denom] = Math.floor(price / denom);
-        price -= change[denom] * denom;
+    for (var i = 0; i < currency.denoms.length; ++i) {
+        var denom = currency.denoms[i];
+        change[denom.value] = Math.floor(price / denom.value);
+        price -= change[denom.value] * denom.value;
     }
 
     return change;
 }
 
-function computePayment(price, denoms, wallet, index) {
+function payment(price, currency, wallet) {
+    wallet[currency.paper] = Math.ceil(price / currency.paper);
+    return computePayment(price, currency, wallet, 0);
+}
+
+function computePayment(price, currency, wallet, index) {
     var keys = _.keys(wallet);
-    var denom = keys[index];
-    var count = wallet[denom];
+    var value = keys[index];
+    var count = wallet[value];
 
     var best = null;
     for (var n = 0; n <= count; ++n) {
-        var remainder = price - n * denom;
+        var remainder = price - n * value;
 
-        wallet[denom] = count - n;
+        wallet[value] = count - n;
 
         var curr = null;
         if (index + 1 < keys.length) {
-            curr = computePayment(remainder, denoms, _.clone(wallet), index + 1);
+            curr = computePayment(remainder, currency, _.clone(wallet), index + 1);
         }
         else if (remainder <= 0) {
             curr = {
-                coins: bestCoinsForPrice(-remainder, denoms) + walletCoins(wallet),
+                coins: fewestCoins(-remainder, currency) + walletCoins(wallet),
                 wallet: _.clone(wallet)
             };
         }
@@ -74,7 +79,7 @@ function computePayment(price, denoms, wallet, index) {
 
         if (best === null || curr.coins < best.coins) {
             var expense = curr.expense || {};
-            expense[denom] = n;
+            expense[value] = n;
             curr.expense = expense;
 
             best = curr;

@@ -11,17 +11,28 @@
 
 <script>
 
-var denoms = [10000, 5000, 2000, 1000, 500, 100, 50, 10, 5, 1];
+var currency = {
+    paper: 1000,
+    denoms: [
+        {value: 500},
+        {value: 100},
+        {value: 50},
+        {value: 10},
+        {value: 5},
+        {value: 1},
+    ],
+};
+
 var wallet = {
     1: 7,
     5: 1,
     10: 5,
     50: 2,
     100: 4,
-    500: 1
+    500: 2
 };
 
-console.log(computePayment(108, denoms, wallet, 0));
+console.log(payment(10108, currency, wallet));
 
 </script>
 </body>
