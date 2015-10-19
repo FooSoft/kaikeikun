@@ -25,12 +25,12 @@
         paper: 1000,
         values: [],
         denoms: {
-            500: {url: 'img/500Yen.png'},
-            100: {url: 'img/100Yen.png'},
-            50:  {url: 'img/50Yen.png'},
-            10:  {url: 'img/10Yen.png'},
-            5:   {url: 'img/5Yen.png'},
-            1:   {url: 'img/1Yen.png'}
+            500: {url: 'img/yen-500.png'},
+            100: {url: 'img/yen-100.png'},
+            50:  {url: 'img/yen-50.png'},
+            10:  {url: 'img/yen-10.png'},
+            5:   {url: 'img/yen-5.png'},
+            1:   {url: 'img/yen-1.png'}
         },
     };
 

@@ -34,7 +34,7 @@
                 <div class="form-inline well">
                     {{#each currency.denoms}}
                     <div class="form-group">
-                        <label for="picker-coin-{{@key}}"><img src="{{url}}" width="50" height="50" class="img-thumbnail" alt></label>
+                        <label for="picker-coin-{{@key}}"><img src="{{url}}" class="img-thumbnail" alt></label>
                         <input type="number" min="0" value="0" id="picker-coin-{{@key}}" class="picker-coin" data-value="{{@key}}">
                     </div>
                     {{/each}}
@@ -50,7 +50,7 @@
                     {{#each payment}}
                     <div>
                         {{#each this}}
-                        <img src="{{this}}" width="50" height="50" class="img-thumbnail" alt>
+                        <img src="{{this}}" class="img-thumbnail" alt>
                         {{/each}}
                     </div>
                     {{/each}}
@@ -67,7 +67,7 @@
                     {{#each change}}
                     <div>
                         {{#each this}}
-                        <img src="{{this}}" width="50" height="50" class="img-thumbnail" alt>
+                        <img src="{{this}}" class="img-thumbnail" alt>
                         {{/each}}
                     </div>
                     {{/each}}
