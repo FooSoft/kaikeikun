@@ -9,27 +9,45 @@
         <div class="container">
             <h1 class="page-header">KaiKei-Kun</h1>
 
+            <!-- expenditure input -->
+            <div class="row">
+                <h2>Expenditure</h2>
+
+                <div class="form-inline">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon">&yen;</div>
+                            <input type="number" min="0" value="0" class="form-control" id="total">
+                        </div>
+                    </div>
+                    <button class="btn btn-default" onclick="compute(false)">Preview</button>
+                    <button class="btn btn-primary" onclick="compute(true)">Deduct</button>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox"> Aggressive</label>
+                </div>
+            </div>
+
             <!-- coin picker -->
             <script id="picker-template" type="text/x-handlers-template">
                 <h2>Wallet</h2>
 
-                <div class="container">
+                <div class="form-inline">
                     {{#each currency.denoms}}
-                    <div class="row">
-                    <img src="{{url}}" width="50" height="50" class="img-thumbnail">
-                    <input type="number" min="0" value="0" class="image-thumbnail picker-coin" data-value="{{@key}}">
+                    <div class="row form-group">
+                        <label for="picker-coin-{{@key}}"><img src="{{url}}" width="50" height="50" class="img-thumbnail"></label>
+                        <input type="number" min="0" value="0" id="picker-coin-{{@key}}" class="picker-coin" data-value="{{@key}}">
                     </div>
                     {{/each}}
                 </div>
             </script>
-            <div id="picker"></div>
 
             <!-- payment display -->
             <script id="payment-template" type="text/x-handlers-template">
                 {{#if payment}}
                 <h2>Payment</h2>
 
-                <div class="container">
+                <div>
                     {{#each payment}}
                     <div class="row">
                         {{#each this}}
@@ -40,14 +58,13 @@
                 </div>
                 {{/if}}
             </script>
-            <div id="payment"></div>
 
             <!-- change display -->
             <script id="change-template" type="text/x-handlers-template">
                 {{#if change}}
                 <h2>Change</h2>
 
-                <div class="container">
+                <div>
                     {{#each change}}
                     <div class="row">
                         {{#each this}}
@@ -58,23 +75,11 @@
                 </div>
                 {{/if}}
             </script>
-            <div id="change"></div>
 
-            <!-- total input -->
-            <h2>Expenditure</h2>
-
-            <div class="form-inline">
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-addon">&yen;</div>
-                        <input type="number" min="0" value="0" class="form-control" id="total">
-                    </div>
-                </div>
-                <button class="btn btn-default" onclick="compute(false)">Preview</button>
-                <button class="btn btn-primary" onclick="compute(true)">Deduct</button>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox"> Aggressive</label>
+            <div class="row">
+                <div id="picker" class="col-md-4"></div>
+                <div id="payment" class="col-md-4"></div>
+                <div id="change" class="col-md-4"></div>
             </div>
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.3/handlebars.min.js"></script>
