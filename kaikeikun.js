@@ -137,14 +137,20 @@
 
     function displayPayment(payment) {
         var template = Handlebars.compile($('#payment-template').html());
-        $('#payment').empty();
-        $('#payment').append(template({payment: payment}));
+        $('#payment').slideUp(function() {
+            $('#payment').empty();
+            $('#payment').append(template({payment: payment}));
+            $('#payment').slideDown();
+        });
     }
 
     function displayChange(change) {
         var template = Handlebars.compile($('#change-template').html());
-        $('#change').empty();
-        $('#change').append(template({change: change}));
+        $('#change').slideUp(function() {
+            $('#change').empty();
+            $('#change').append(template({change: change}));
+            $('#change').slideDown();
+        });
     }
 
     function pickerToWallet() {
