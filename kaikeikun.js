@@ -76,12 +76,10 @@
 
         for (var i = currency.values.length - 1; i >= 0; --i) {
             var value = currency.values[i];
-            if (!_.has(wallet, value)) {
-                continue;
+            if (_.has(wallet, value)) {
+                sum += value * wallet[value];
+                points.push(sum);
             }
-
-            sum += value * wallet[value];
-            points.push(sum);
         }
 
         points.reverse();
@@ -162,6 +160,8 @@
         for (var value in wallet) {
             $('.picker-coin[data-value="' + value + '"]').val(wallet[value] || 0);
         }
+
+        saveWallet();
     }
 
     function buildCoinListing(currency, data) {
@@ -221,6 +221,7 @@
                 }
 
                 walletToPicker(wallet);
+                $('#total').val(0);
             }
         }
 
