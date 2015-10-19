@@ -167,7 +167,7 @@
     function buildCoinListing(currency, data) {
         var result = [];
         for (var value in data) {
-            if (currency.values.indexOf(value) === -1) {
+            if (!_.has(currency.denoms, value)) {
                 continue;
             }
 
@@ -195,6 +195,7 @@
     window.compute = function(deduct) {
         if (_yen.values.length === 0) {
             _yen.values = _.map(_.keys(_yen.denoms), function (n) { return parseInt(n); });
+            _yen.values.push(_yen.paper);
             _yen.values.sort(function(a, b) {
                 return b - a;
             });
