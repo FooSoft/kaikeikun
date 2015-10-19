@@ -20,137 +20,119 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-var yen = {
-    paper: 1000,
-    denoms: [
-        {
-            value: 500,
-            url: 'img/500Yen.png'
-        },
-        {
-            value: 100,
-            url: 'img/100Yen.png'
-        },
-        {
-            value: 50,
-            url: 'img/50Yen.png'
-        },
-        {
-            value: 10,
-            url: 'img/10Yen.png'
-        },
-        {
-            value: 5,
-            url: 'img/5Yen.png'
-        },
-        {
-            value: 1,
-            url: 'img/1Yen.png'
-        },
-    ],
-};
+(function() {
+    var _yen = {
+        paper: 1000,
+        denoms: [
+            {value: 500, url: 'img/500Yen.png'},
+            {value: 100, url: 'img/100Yen.png'},
+            {value: 50, url: 'img/50Yen.png'},
+            {value: 10, url: 'img/10Yen.png'},
+            {value: 5, url: 'img/5Yen.png'},
+            {value: 1, url: 'img/1Yen.png'}
+        ],
+    };
 
-function walletCoins(wallet) {
-    var total = 0;
-    for (var denom in wallet) {
-        total += wallet[denom];
+    function walletCoinCount(wallet) {
+        var total = 0;
+        for (var denom in wallet) {
+            total += wallet[denom];
+        }
+
+        return total;
     }
 
-    return total;
-}
-
-function fewestCoins(price, currency) {
-    return walletCoins(fewestCoinChange(price, currency));
-}
-
-function fewestCoinChange(price, currency) {
-    console.assert(price >= 0);
-
-    var change = {};
-    for (var i = 0; i < currency.denoms.length; ++i) {
-        var denom = currency.denoms[i];
-        change[denom.value] = Math.floor(price / denom.value);
-        price -= change[denom.value] * denom.value;
+    function bestCoinCount(price, currency) {
+        return walletCoinCount(bestCoinChange(price, currency));
     }
 
-    return change;
-}
-
-function payment(price, currency, wallet) {
-    wallet[currency.paper] = Math.ceil(price / currency.paper);
-    return computePayment(price, currency, wallet, 0);
-}
-
-function computePayment(price, currency, wallet, index) {
-    var keys = _.keys(wallet);
-    var value = keys[index];
-    var count = wallet[value];
-
-    var best = null;
-    for (var n = 0; n <= count; ++n) {
-        var remainder = price - n * value;
-
-        wallet[value] = count - n;
-
-        var curr = null;
-        if (index + 1 < keys.length) {
-            curr = computePayment(remainder, currency, _.clone(wallet), index + 1);
-        }
-        else if (remainder <= 0) {
-            curr = {
-                coins: fewestCoins(-remainder, currency) + walletCoins(wallet),
-                wallet: _.clone(wallet)
-            };
+    function bestCoinChange(price, currency) {
+        var change = {};
+        for (var i = 0; i < currency.denoms.length; ++i) {
+            var denom = currency.denoms[i];
+            change[denom.value] = Math.floor(price / denom.value);
+            price -= change[denom.value] * denom.value;
         }
 
-        if (curr === null) {
-            continue;
-        }
-
-        if (best === null || curr.coins < best.coins) {
-            var expense = curr.expense || {};
-            expense[value] = n;
-            curr.expense = expense;
-
-            best = curr;
-        }
+        return change;
     }
 
-    return best;
-}
-
-function displayCoinPicker() {
-    var template = Handlebars.compile($('#coin-picker-template').html());
-
-    $('#coin-picker').empty();
-    $('#coin-picker').append(template({currency: yen}));
-}
-
-function displayChange(change) {
-    var template = Handlebars.compile($('#coin-change-template').html());
-
-    $('#coin-change').empty();
-    $('#coin-change').append(template({coins: change}));
-}
-
-function computeChange() {
-    var wallet = {};
-    $('.coin-picker-coin').each(function() {
-        wallet[$(this).attr('data-value')] = parseInt($(this).val());
-    });
-
-    var total = parseInt($('#total').val());
-    var details = payment(total, yen, wallet);
-
-    var change = [];
-    for (var i in details.expense) {
-        var count = details.expense[i];
-        for (var j = 0; j < count; ++j) {
-            change.push({url: 'img/' + i + 'Yen.png'});
-        }
+    function payment(price, currency, wallet) {
+        wallet[currency.paper] = Math.ceil(price / currency.paper);
+        var result = computePayment(price, currency, wallet, 0);
+        delete wallet[currency.paper];
+        return result;
     }
 
-    displayChange(change);
-}
+    function computePayment(price, currency, wallet, index) {
+        var keys = _.keys(wallet);
+        var value = keys[index];
+        var count = wallet[value];
 
-displayCoinPicker();
+        var best = null;
+        for (var n = 0; n <= count; ++n) {
+            var remainder = price - n * value;
+
+            wallet[value] = count - n;
+
+            var curr = null;
+            if (index + 1 < keys.length) {
+                curr = computePayment(remainder, currency, _.clone(wallet), index + 1);
+            }
+            else if (remainder <= 0) {
+                curr = {
+                    coins: bestCoinCount(-remainder, currency) + walletCoinCount(wallet),
+                    wallet: _.clone(wallet)
+                };
+            }
+
+            if (curr === null) {
+                continue;
+            }
+
+            if (best === null || curr.coins < best.coins) {
+                var expense = curr.expense || {};
+                expense[value] = n;
+                curr.expense = expense;
+
+                best = curr;
+            }
+        }
+
+        return best;
+    }
+
+    function displayPicker(currency) {
+        var template = Handlebars.compile($('#picker-template').html());
+        $('#picker').empty();
+        $('#picker').append(template({currency: currency}));
+    }
+
+    function displayPayment(payment) {
+        var template = Handlebars.compile($('#payment-template').html());
+        $('#payment').empty();
+        $('#payment').append(template({payment: payment}));
+    }
+
+    window.compute = function() {
+        var wallet = {};
+        $('.picker-coin').each(function() {
+            wallet[$(this).attr('data-value')] = parseInt($(this).val());
+        });
+
+        var total = parseInt($('#total').val());
+        var details = payment(total, _yen, wallet);
+
+        var change = [];
+        for (var i in details.expense) {
+            var count = details.expense[i];
+            for (var j = 0; j < count; ++j) {
+                change.push({url: 'img/' + i + 'Yen.png'});
+            }
+        }
+
+        displayPayment(change);
+    };
+
+    displayPicker(_yen);
+})();
