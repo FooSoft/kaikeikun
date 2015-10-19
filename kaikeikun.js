@@ -23,14 +23,15 @@
 (function() {
     var _yen = {
         paper: 1000,
-        denoms: [
-            {value: 500, url: 'img/500Yen.png'},
-            {value: 100, url: 'img/100Yen.png'},
-            {value: 50, url: 'img/50Yen.png'},
-            {value: 10, url: 'img/10Yen.png'},
-            {value: 5, url: 'img/5Yen.png'},
-            {value: 1, url: 'img/1Yen.png'}
-        ],
+        values: [],
+        denoms: {
+            500: {url: 'img/500Yen.png'},
+            100: {url: 'img/100Yen.png'},
+            50:  {url: 'img/50Yen.png'},
+            10:  {url: 'img/10Yen.png'},
+            5:   {url: 'img/5Yen.png'},
+            1:   {url: 'img/1Yen.png'}
+        },
     };
 
     function walletCoinCount(wallet) {
@@ -48,10 +49,11 @@
 
     function bestCoinChange(price, currency) {
         var change = {};
-        for (var i = 0; i < currency.denoms.length; ++i) {
-            var denom = currency.denoms[i];
-            change[denom.value] = Math.floor(price / denom.value);
-            price -= change[denom.value] * denom.value;
+        for (var i = 0; i < currency.values.length; ++i) {
+            var value = currency.values[i];
+            var denom = currency.denoms[value];
+            change[value] = Math.floor(price / value);
+            price -= change[value] * value;
         }
 
         return change;
@@ -65,8 +67,7 @@
     }
 
     function computePayment(price, currency, wallet, index) {
-        var keys = _.keys(wallet);
-        var value = keys[index];
+        var value = currency.values[index];
         var count = wallet[value];
 
         var best = null;
@@ -76,7 +77,7 @@
             wallet[value] = count - n;
 
             var curr = null;
-            if (index + 1 < keys.length) {
+            if (index + 1 < currency.values.length) {
                 curr = computePayment(remainder, currency, _.clone(wallet), index + 1);
             }
             else if (remainder <= 0) {
@@ -108,30 +109,58 @@
         $('#picker').append(template({currency: currency}));
     }
 
-    function displayPayment(payment) {
+    function displayPayment(payments) {
         var template = Handlebars.compile($('#payment-template').html());
         $('#payment').empty();
-        $('#payment').append(template({payment: payment}));
+        $('#payment').append(template({payments: payments}));
     }
 
-    window.compute = function() {
+    function pickerToWallet() {
         var wallet = {};
         $('.picker-coin').each(function() {
             wallet[$(this).attr('data-value')] = parseInt($(this).val());
         });
 
+        return wallet;
+    }
+
+    function walletToPicker(wallet) {
+        for (var value in wallet) {
+            $('.picker-coin[data-value="' + value + '"]').val(wallet[value]);
+        }
+    }
+
+    window.compute = function() {
+        if (_yen.values.length === 0) {
+            _yen.values = _.keys(_yen.denoms);
+            _yen.values.sort(function(a, b) {
+                return b - a;
+            });
+        }
+
         var total = parseInt($('#total').val());
+        var wallet = pickerToWallet();
         var details = payment(total, _yen, wallet);
 
-        var change = [];
-        for (var i in details.expense) {
-            var count = details.expense[i];
-            for (var j = 0; j < count; ++j) {
-                change.push({url: 'img/' + i + 'Yen.png'});
+        var payments = [];
+        if (details !== null) {
+            for (var value in details.expense) {
+                if (_yen.values.indexOf(value) === -1) {
+                    continue;
+                }
+
+                var coins = [];
+                for (var n = 0; n < details.expense[value]; ++n) {
+                    coins.push(_yen.denoms[value].url);
+                }
+
+                if (coins.length > 0) {
+                    payments.push(coins);
+                }
             }
         }
 
-        displayPayment(change);
+        displayPayment(payments);
     };
 
     displayPicker(_yen);

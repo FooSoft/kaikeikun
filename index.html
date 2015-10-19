@@ -17,7 +17,7 @@
                     {{#each currency.denoms}}
                     <div class="row">
                     <img src="{{url}}" width="50" height="50">
-                    <input type="number" min="0" value="0" class="picker-coin" data-value="{{value}}">
+                    <input type="number" min="0" value="0" class="picker-coin" data-value="{{@key}}">
                     </div>
                     {{/each}}
                 </div>
@@ -28,9 +28,15 @@
             <script id="payment-template" type="text/x-handlers-template">
                 <h2>Payment</h2>
 
-                {{#each payment}}
-                <img src="{{url}}" width="75" height="75">
-                {{/each}}
+                <div class="container">
+                    {{#each payments}}
+                    <div class="row">
+                        {{#each this}}
+                        <img src="{{this}}" width="50" height="50">
+                        {{/each}}
+                    </div>
+                    {{/each}}
+                </div>
             </script>
             <div id="payment"></div>
 
