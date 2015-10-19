@@ -91,7 +91,7 @@
 
     function computePayment(price, currency, wallet, aggressive, points, index) {
         var value = currency.values[index];
-        var count = wallet[value];
+        var count = wallet[value] || 0;
 
         var best = null;
         for (var n = 0; n <= count; ++n) {
@@ -132,6 +132,9 @@
         var template = Handlebars.compile($('#picker-template').html());
         $('#picker').empty();
         $('#picker').append(template({currency: currency}));
+        $('.picker-coin').on('input propertychange paste', function() {
+            saveWallet();
+        });
     }
 
     function displayPayment(payment) {
@@ -157,7 +160,7 @@
 
     function walletToPicker(wallet) {
         for (var value in wallet) {
-            $('.picker-coin[data-value="' + value + '"]').val(wallet[value]);
+            $('.picker-coin[data-value="' + value + '"]').val(wallet[value] || 0);
         }
     }
 
@@ -181,9 +184,17 @@
         return result;
     }
 
-    window.compute = function() {
+    function saveWallet() {
+        localStorage.wallet = JSON.stringify(pickerToWallet());
+    }
+
+    function loadWallet() {
+        walletToPicker(JSON.parse(localStorage.wallet || '{}'));
+    }
+
+    window.compute = function(deduct) {
         if (_yen.values.length === 0) {
-            _yen.values = _.keys(_yen.denoms);
+            _yen.values = _.map(_.keys(_yen.denoms), function (n) { return parseInt(n); });
             _yen.values.sort(function(a, b) {
                 return b - a;
             });
@@ -199,8 +210,17 @@
         var details = makePayment(total, _yen, wallet, aggressive);
         if (details !== null) {
             var difference = walletCoinSum(details.expense) - total;
+
             change  = buildCoinListing(_yen, bestCoinChange(difference, _yen));
             payment = buildCoinListing(_yen, details.expense);
+
+            if (deduct) {
+                for (var i in details.expense) {
+                    wallet[i] -= details.expense[i];
+                }
+
+                walletToPicker(wallet);
+            }
         }
 
         displayPayment(payment);
@@ -208,4 +228,5 @@
     };
 
     displayPicker(_yen);
+    loadWallet();
 })();

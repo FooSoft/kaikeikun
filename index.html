@@ -64,8 +64,9 @@
             <div>
                 <h2>Total</h2>
                 <p>
-                    &yen; <input type="number" value="0" id="total">
-                    <input type="button" value="Compute" onclick="compute()">
+                    &yen; <input type="number" min="0" value="0" id="total">
+                    <input type="button" value="Preview" onclick="compute(false)">
+                    <input type="button" value="Deduct" onclick="compute(true)">
                 </p>
                 <p>
                     <input type="checkbox" id="aggressive"> Aggressive mode
