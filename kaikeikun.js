@@ -70,10 +70,26 @@
 
     function makePayment(price, currency, wallet, aggressive) {
         wallet[currency.paper] = Math.ceil(price / currency.paper);
-        return computePayment(price, currency, wallet, aggressive, 0);
+
+        var points = [];
+        var sum    = 0;
+
+        for (var i = currency.values.length - 1; i >= 0; --i) {
+            var value = currency.values[i];
+            if (!_.has(wallet, value)) {
+                continue;
+            }
+
+            sum += value * wallet[value];
+            points.push(sum);
+        }
+
+        points.reverse();
+
+        return computePayment(price, currency, wallet, aggressive, points, 0);
     }
 
-    function computePayment(price, currency, wallet, aggressive, index) {
+    function computePayment(price, currency, wallet, aggressive, points, index) {
         var value = currency.values[index];
         var count = wallet[value];
 
@@ -85,7 +101,9 @@
 
             var curr = null;
             if (index + 1 < currency.values.length) {
-                curr = computePayment(remainder, currency, _.clone(wallet), aggressive, index + 1);
+                if (remainder <= points[index + 1]) {
+                    curr = computePayment(remainder, currency, _.clone(wallet), aggressive, points, index + 1);
+                }
             }
             else if (remainder <= 0) {
                 curr = {
