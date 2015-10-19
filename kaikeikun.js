@@ -20,6 +20,36 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+var yen = {
+    paper: 1000,
+    denoms: [
+        {
+            value: 500,
+            img: 'img/500Yen.png'
+        },
+        {
+            value: 100,
+            img: 'img/100Yen.png'
+        },
+        {
+            value: 50,
+            img: 'img/50Yen.png'
+        },
+        {
+            value: 10,
+            img: 'img/10Yen.png'
+        },
+        {
+            value: 5,
+            img: 'img/5Yen.png'
+        },
+        {
+            value: 1,
+            img: 'img/1Yen.png'
+        },
+    ],
+};
+
 function walletCoins(wallet) {
     var total = 0;
     for (var denom in wallet) {

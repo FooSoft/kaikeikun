@@ -1,39 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <style>
+            img {
+                width : 75px;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <img src="img/1Yen.png">
+            <input type="number" min="0" value="0" name="1yen">
+        </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-<script src="kaikeikun.js"></script>
+        <div>
+            <img src="img/5Yen.png">
+            <input type="number" min="0" value="0" name="1yen">
+        </div>
 
-<script>
+        <div>
+            <img src="img/10Yen.png">
+            <input type="number" min="0" value="0" name="1yen">
+        </div>
 
-var currency = {
-    paper: 1000,
-    denoms: [
-        {value: 500},
-        {value: 100},
-        {value: 50},
-        {value: 10},
-        {value: 5},
-        {value: 1},
-    ],
-};
+        <div>
+            <img src="img/50Yen.png">
+            <input type="number" min="0" value="0" name="1yen">
+        </div>
 
-var wallet = {
-    1: 7,
-    5: 1,
-    10: 5,
-    50: 2,
-    100: 4,
-    500: 2
-};
+        <div>
+            <img src="img/100Yen.png">
+            <input type="number" min="0" value="0" name="1yen">
+        </div>
 
-console.log(payment(10108, currency, wallet));
+        <div>
+            <img src="img/500Yen.png">
+            <input type="number" min="0" value="0" name="1yen">
+        </div>
 
-</script>
-</body>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="kaikeikun.js"></script>
+    </body>
 </html>
