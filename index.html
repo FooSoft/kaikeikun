@@ -7,22 +7,21 @@
     </head>
     <body>
         <div class="container">
-            <h1 class="page-header">KaiKei-Kun</h1>
+            <h1 class="page-header">KaiKei-Kun <small>会計君</small></h1>
 
             <!-- expenditure input -->
-            <div class="row">
+            <div>
                 <h2>Expenditure</h2>
 
-                <div class="form-inline">
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-addon">&yen;</div>
-                            <input type="number" min="0" value="0" class="form-control" id="total">
-                        </div>
+                <div class="input-group">
+                    <div class="input-group-addon">&yen;</div>
+                    <input type="number" min="0" value="0" class="form-control" id="total">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" onclick="compute(false)">Preview</button>
+                        <button class="btn btn-primary" onclick="compute(true)">Deduct</button>
                     </div>
-                    <button class="btn btn-default" onclick="compute(false)">Preview</button>
-                    <button class="btn btn-primary" onclick="compute(true)">Deduct</button>
                 </div>
+
                 <div class="checkbox">
                     <label><input type="checkbox"> Aggressive</label>
                 </div>
@@ -32,10 +31,10 @@
             <script id="picker-template" type="text/x-handlers-template">
                 <h2>Wallet</h2>
 
-                <div class="form-inline">
+                <div class="form-inline well">
                     {{#each currency.denoms}}
-                    <div class="row form-group">
-                        <label for="picker-coin-{{@key}}"><img src="{{url}}" width="50" height="50" class="img-thumbnail"></label>
+                    <div class="form-group">
+                        <label for="picker-coin-{{@key}}"><img src="{{url}}" width="50" height="50" class="img-thumbnail" alt></label>
                         <input type="number" min="0" value="0" id="picker-coin-{{@key}}" class="picker-coin" data-value="{{@key}}">
                     </div>
                     {{/each}}
@@ -47,11 +46,11 @@
                 {{#if payment}}
                 <h2>Payment</h2>
 
-                <div>
+                <div class="well">
                     {{#each payment}}
-                    <div class="row">
+                    <div>
                         {{#each this}}
-                        <img src="{{this}}" width="50" height="50" class="img-thumbnail">
+                        <img src="{{this}}" width="50" height="50" class="img-thumbnail" alt>
                         {{/each}}
                     </div>
                     {{/each}}
@@ -64,11 +63,11 @@
                 {{#if change}}
                 <h2>Change</h2>
 
-                <div>
+                <div class="well">
                     {{#each change}}
-                    <div class="row">
+                    <div>
                         {{#each this}}
-                        <img src="{{this}}" width="50" height="50" class="img-thumbnail">
+                        <img src="{{this}}" width="50" height="50" class="img-thumbnail" alt>
                         {{/each}}
                     </div>
                     {{/each}}
