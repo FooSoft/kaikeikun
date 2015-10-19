@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+<script src="kaikeikun.js"></script>
+
+<script>
+
+var denoms = [10000, 5000, 2000, 1000, 500, 100, 50, 10, 5, 1];
+var wallet = {
+    1: 7,
+    5: 1,
+    10: 5,
+    50: 2,
+    100: 4,
+    500: 1
+};
+
+console.log(computePayment(108, denoms, wallet, 0));
+
+</script>
+</body>
+</html>
