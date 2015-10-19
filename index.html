@@ -4,43 +4,33 @@
         <meta charset="UTF-8">
         <title></title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <style>
-            img {
-                width : 75px;
-            }
-        </style>
     </head>
     <body>
-        <div>
-            <img src="img/1Yen.png">
-            <input type="number" min="0" value="0" name="1yen">
-        </div>
+        <h1>会計君</h1>
 
+        <script id="coin-picker-template" type="text/x-handlers-template">
+        {{#each currency.denoms}}
         <div>
-            <img src="img/5Yen.png">
-            <input type="number" min="0" value="0" name="1yen">
+            <img src="{{url}}" width="75" height="75">
+            <input type="number" min="0" value="0" class="coin-picker-coin" data-value="{{value}}">
         </div>
+        {{/each}}
+        </script>
+        <div id="coin-picker"></div>
 
-        <div>
-            <img src="img/10Yen.png">
-            <input type="number" min="0" value="0" name="1yen">
-        </div>
+        Total: <input type="number" id="total">
+        <input type="button" value="Compute" onclick="computeChange()">
 
-        <div>
-            <img src="img/50Yen.png">
-            <input type="number" min="0" value="0" name="1yen">
-        </div>
+        <script id="coin-change-template" type="text/x-handlers-template">
+        <hr>
+        {{#each coins}}
+        <img src="{{url}}" width="75" height="75">
+        {{/each}}
+        </script>
 
-        <div>
-            <img src="img/100Yen.png">
-            <input type="number" min="0" value="0" name="1yen">
-        </div>
+        <div id="coin-change"></div>
 
-        <div>
-            <img src="img/500Yen.png">
-            <input type="number" min="0" value="0" name="1yen">
-        </div>
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.3/handlebars.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>

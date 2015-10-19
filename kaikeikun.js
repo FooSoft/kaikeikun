@@ -25,27 +25,27 @@ var yen = {
     denoms: [
         {
             value: 500,
-            img: 'img/500Yen.png'
+            url: 'img/500Yen.png'
         },
         {
             value: 100,
-            img: 'img/100Yen.png'
+            url: 'img/100Yen.png'
         },
         {
             value: 50,
-            img: 'img/50Yen.png'
+            url: 'img/50Yen.png'
         },
         {
             value: 10,
-            img: 'img/10Yen.png'
+            url: 'img/10Yen.png'
         },
         {
             value: 5,
-            img: 'img/5Yen.png'
+            url: 'img/5Yen.png'
         },
         {
             value: 1,
-            img: 'img/1Yen.png'
+            url: 'img/1Yen.png'
         },
     ],
 };
@@ -118,3 +118,39 @@ function computePayment(price, currency, wallet, index) {
 
     return best;
 }
+
+function displayCoinPicker() {
+    var template = Handlebars.compile($('#coin-picker-template').html());
+
+    $('#coin-picker').empty();
+    $('#coin-picker').append(template({currency: yen}));
+}
+
+function displayChange(change) {
+    var template = Handlebars.compile($('#coin-change-template').html());
+
+    $('#coin-change').empty();
+    $('#coin-change').append(template({coins: change}));
+}
+
+function computeChange() {
+    var wallet = {};
+    $('.coin-picker-coin').each(function() {
+        wallet[$(this).attr('data-value')] = parseInt($(this).val());
+    });
+
+    var total = parseInt($('#total').val());
+    var details = payment(total, yen, wallet);
+
+    var change = [];
+    for (var i in details.expense) {
+        var count = details.expense[i];
+        for (var j = 0; j < count; ++j) {
+            change.push({url: 'img/' + i + 'Yen.png'});
+        }
+    }
+
+    displayChange(change);
+}
+
+displayCoinPicker();
