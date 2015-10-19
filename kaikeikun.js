@@ -43,6 +43,15 @@
         return total;
     }
 
+    function walletCoinSum(wallet) {
+        var total = 0;
+        for (var denom in wallet) {
+            total += denom * wallet[denom];
+        }
+
+        return total;
+    }
+
     function bestCoinCount(price, currency) {
         return walletCoinCount(bestCoinChange(price, currency));
     }
@@ -59,14 +68,12 @@
         return change;
     }
 
-    function payment(price, currency, wallet) {
+    function makePayment(price, currency, wallet, aggressive) {
         wallet[currency.paper] = Math.ceil(price / currency.paper);
-        var result = computePayment(price, currency, wallet, 0);
-        delete wallet[currency.paper];
-        return result;
+        return computePayment(price, currency, wallet, aggressive, 0);
     }
 
-    function computePayment(price, currency, wallet, index) {
+    function computePayment(price, currency, wallet, aggressive, index) {
         var value = currency.values[index];
         var count = wallet[value];
 
@@ -78,11 +85,11 @@
 
             var curr = null;
             if (index + 1 < currency.values.length) {
-                curr = computePayment(remainder, currency, _.clone(wallet), index + 1);
+                curr = computePayment(remainder, currency, _.clone(wallet), aggressive, index + 1);
             }
             else if (remainder <= 0) {
                 curr = {
-                    coins: bestCoinCount(-remainder, currency) + walletCoinCount(wallet),
+                    coins: bestCoinCount(-remainder, currency) + (aggressive ? walletCoinCount(wallet) : 0),
                     wallet: _.clone(wallet)
                 };
             }
@@ -109,10 +116,16 @@
         $('#picker').append(template({currency: currency}));
     }
 
-    function displayPayment(payments) {
+    function displayPayment(payment) {
         var template = Handlebars.compile($('#payment-template').html());
         $('#payment').empty();
-        $('#payment').append(template({payments: payments}));
+        $('#payment').append(template({payment: payment}));
+    }
+
+    function displayChange(change) {
+        var template = Handlebars.compile($('#change-template').html());
+        $('#change').empty();
+        $('#change').append(template({change: change}));
     }
 
     function pickerToWallet() {
@@ -130,6 +143,26 @@
         }
     }
 
+    function buildCoinListing(currency, data) {
+        var result = [];
+        for (var value in data) {
+            if (currency.values.indexOf(value) === -1) {
+                continue;
+            }
+
+            var coins = [];
+            for (var n = 0; n < data[value]; ++n) {
+                coins.push(currency.denoms[value].url);
+            }
+
+            if (coins.length > 0) {
+                result.push(coins);
+            }
+        }
+
+        return result;
+    }
+
     window.compute = function() {
         if (_yen.values.length === 0) {
             _yen.values = _.keys(_yen.denoms);
@@ -138,29 +171,22 @@
             });
         }
 
-        var total = parseInt($('#total').val());
-        var wallet = pickerToWallet();
-        var details = payment(total, _yen, wallet);
+        var total      = parseInt($('#total').val());
+        var wallet     = pickerToWallet();
+        var aggressive = $('#aggressive').is(':checked');
 
-        var payments = [];
+        var payment = [];
+        var change  = [];
+
+        var details = makePayment(total, _yen, wallet, aggressive);
         if (details !== null) {
-            for (var value in details.expense) {
-                if (_yen.values.indexOf(value) === -1) {
-                    continue;
-                }
-
-                var coins = [];
-                for (var n = 0; n < details.expense[value]; ++n) {
-                    coins.push(_yen.denoms[value].url);
-                }
-
-                if (coins.length > 0) {
-                    payments.push(coins);
-                }
-            }
+            var difference = walletCoinSum(details.expense) - total;
+            change  = buildCoinListing(_yen, bestCoinChange(difference, _yen));
+            payment = buildCoinListing(_yen, details.expense);
         }
 
-        displayPayment(payments);
+        displayPayment(payment);
+        displayChange(change);
     };
 
     displayPicker(_yen);

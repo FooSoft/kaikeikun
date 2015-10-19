@@ -16,8 +16,8 @@
                 <div class="container">
                     {{#each currency.denoms}}
                     <div class="row">
-                    <img src="{{url}}" width="50" height="50">
-                    <input type="number" min="0" value="0" class="picker-coin" data-value="{{@key}}">
+                    <img src="{{url}}" width="50" height="50" class="img-thumbnail">
+                    <input type="number" min="0" value="0" class="image-thumbnail picker-coin" data-value="{{@key}}">
                     </div>
                     {{/each}}
                 </div>
@@ -26,25 +26,50 @@
 
             <!-- payment display -->
             <script id="payment-template" type="text/x-handlers-template">
+                {{#if payment}}
                 <h2>Payment</h2>
 
                 <div class="container">
-                    {{#each payments}}
+                    {{#each payment}}
                     <div class="row">
                         {{#each this}}
-                        <img src="{{this}}" width="50" height="50">
+                        <img src="{{this}}" width="50" height="50" class="img-thumbnail">
                         {{/each}}
                     </div>
                     {{/each}}
                 </div>
+                {{/if}}
             </script>
             <div id="payment"></div>
+
+            <!-- change display -->
+            <script id="change-template" type="text/x-handlers-template">
+                {{#if change}}
+                <h2>Change</h2>
+
+                <div class="container">
+                    {{#each change}}
+                    <div class="row">
+                        {{#each this}}
+                        <img src="{{this}}" width="50" height="50" class="img-thumbnail">
+                        {{/each}}
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+            </script>
+            <div id="change"></div>
 
             <!-- total input -->
             <div>
                 <h2>Total</h2>
-                &yen; <input type="number" value="0" id="total">
-                <input type="button" value="Compute" onclick="compute()">
+                <p>
+                    &yen; <input type="number" value="0" id="total">
+                    <input type="button" value="Compute" onclick="compute()">
+                </p>
+                <p>
+                    <input type="checkbox" id="aggressive"> Aggressive mode
+                </p>
             </div>
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.3/handlebars.min.js"></script>
