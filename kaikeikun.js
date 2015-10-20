@@ -211,19 +211,24 @@
         var wallet     = pickerToWallet();
         var aggressive = $('#aggressive').is(':checked');
 
-        var payment = [];
-        var change  = [];
+        var paymentList = [];
+        var changeList  = [];
 
         var details = makePayment(total, _yen, wallet, aggressive);
         if (details !== null) {
             var difference = walletCoinSum(details.expense) - total;
+            var change     = bestCoinChange(difference, _yen);
 
-            change  = buildCoinListing(_yen, bestCoinChange(difference, _yen));
-            payment = buildCoinListing(_yen, details.expense);
+            changeList  = buildCoinListing(_yen, change);
+            paymentList = buildCoinListing(_yen, details.expense);
 
             if (deduct) {
                 for (var i in details.expense) {
                     wallet[i] -= details.expense[i];
+                }
+
+                for (var j in change) {
+                    wallet[j] += change[j];
                 }
 
                 walletToPicker(wallet);
@@ -231,8 +236,8 @@
             }
         }
 
-        displayPayment(payment);
-        displayChange(change);
+        displayPayment(paymentList);
+        displayChange(changeList);
     };
 
     displayPicker(_yen);
