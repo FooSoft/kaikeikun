@@ -21,6 +21,7 @@
  */
 
 (function() {
+    var _wallet = {};
     var _yen = {
         paper: 1000,
         values: [],
@@ -137,20 +138,14 @@
 
     function displayExpense(expense, bonus) {
         var template = Handlebars.compile($('#expense-template').html());
-        $('#expense').slideUp(function() {
-            $('#expense').empty();
-            $('#expense').append(template({expense: expense, bonus: bonus}));
-            $('#expense').slideDown();
-        });
+        $('#expense').empty();
+        $('#expense').append(template({expense: expense, bonus: bonus}));
     }
 
     function displayChange(change) {
         var template = Handlebars.compile($('#change-template').html());
-        $('#change').slideUp(function() {
-            $('#change').empty();
-            $('#change').append(template({change: change}));
-            $('#change').slideDown();
-        });
+        $('#change').empty();
+        $('#change').append(template({change: change}));
     }
 
     function pickerToWallet() {
@@ -198,42 +193,43 @@
         walletToPicker(JSON.parse(localStorage.wallet || '{}'));
     }
 
-    window.compute = function(deduct) {
+    window.compute = function() {
         if (_yen.values.length === 0) {
             _yen.values = _.map(_.keys(_yen.denoms), function (n) { return parseInt(n); });
             _yen.values.push(_yen.paper);
-            _yen.values.sort(function(a, b) {
-                return b - a;
-            });
+            _yen.values.sort(function(a, b) { return b - a; });
         }
 
-        var total      = parseInt($('#total').val());
-        var wallet     = pickerToWallet();
-        var aggressive = $('#aggressive').is(':checked');
+        _wallet = pickerToWallet();
 
-        var payment    = makePayment(total, _yen, wallet, aggressive);
-        var expenseSum = walletCoinSum(payment.expense);
-        var changeSum  = walletCoinSum(payment.expense) - total;
-        var change     = bestCoinChange(changeSum, _yen);
-
-        var changeList  = buildCoinListing(_yen, change);
-        var expenseList = buildCoinListing(_yen, payment.expense);
-
-        if (deduct) {
-            for (var i in payment.expense) {
-                wallet[i] -= payment.expense[i];
-            }
-
-            for (var j in change) {
-                wallet[j] += change[j];
-            }
-
-            walletToPicker(wallet);
-            $('#total').val(0);
+        var total = parseInt($('#total').val());
+        if (total <= 0) {
+            return;
         }
 
-        displayExpense(expenseList, payment.expense[_yen.paper] * _yen.paper);
-        displayChange(changeList);
+        var payment = makePayment(total, _yen, _wallet, $('#aggressive').is(':checked'));
+        var change  = bestCoinChange(walletCoinSum(payment.expense) - total, _yen);
+
+        for (var i in payment.expense) {
+            _wallet[i] -= payment.expense[i];
+        }
+
+        for (var j in change) {
+            _wallet[j] += change[j];
+        }
+
+        displayChange(buildCoinListing(_yen, change));
+        displayExpense(
+            buildCoinListing(_yen, payment.expense),
+            payment.expense[_yen.paper] * _yen.paper
+        );
+
+        $('#preview').modal();
+    };
+
+    window.apply = function() {
+        walletToPicker(_wallet);
+        $('#total').val(0);
     };
 
     displayPicker(_yen);

@@ -9,44 +9,69 @@
         <div class="container">
             <h1 class="page-header">KaiKei-Kun <small>会計君</small></h1>
 
-            <!-- expenditure input -->
+            <!-- payment input -->
             <div>
-                <h2>Expenditure</h2>
+                <h2>Payment</h2>
 
                 <div class="input-group">
                     <div class="input-group-addon">&yen;</div>
                     <input type="number" min="0" value="0" class="form-control" id="total">
                     <div class="input-group-btn">
-                        <button class="btn btn-default" onclick="compute(false)">Preview</button>
-                        <button class="btn btn-primary" onclick="compute(true)">Deduct</button>
+                        <button class="btn btn-primary"  onclick="compute();">Pay</button>
                     </div>
                 </div>
-
                 <div class="checkbox">
-                    <label><input type="checkbox"> Aggressive</label>
+                    <label><input type="checkbox">&nbsp;Aggressive</label>
                 </div>
             </div>
 
-            <!-- coin picker -->
+            <!-- preview dialog -->
+            <div class="modal fade" id="preview" tabindex="-1" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title">Preview</h4>
+                        </div>
+                        <div class="modal-body">
+                            <!-- expense stub -->
+                            <div id="expense"></div>
+                            <!-- change stub -->
+                            <div id="change"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="apply();">Apply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- picker stub -->
+            <div id="picker"></div>
+
+            <!-- coin picker template -->
             <script id="picker-template" type="text/x-handlers-template">
                 <h2>Wallet</h2>
 
-                <div class="form-inline well">
+                <div>
                     {{#each currency.denoms}}
                     <div class="form-group">
-                        <label for="picker-coin-{{@key}}"><img src="{{url}}" class="img-thumbnail" alt></label>
-                        <input type="number" min="0" value="0" id="picker-coin-{{@key}}" class="picker-coin" data-value="{{@key}}">
+                        <label for="picker-coin-{{@key}}" class="control-label"><img src="{{url}}" class="img-thumbnail" alt></label>
+                        <input type="number" min="0" value="0" id="picker-coin-{{@key}}" class="form-control picker-coin" data-value="{{@key}}">
                     </div>
                     {{/each}}
                 </div>
             </script>
 
-            <!-- expense display -->
+            <!-- expense display template -->
             <script id="expense-template" type="text/x-handlers-template">
                 {{#if expense}}
                 <h2>Expense{{#if bonus}}&nbsp;<small>+{{bonus}}&yen;</small>{{/if}}</h2>
 
-                <div class="well">
+                <div>
                     {{#each expense}}
                     <div>
                         {{#each this}}
@@ -58,12 +83,12 @@
                 {{/if}}
             </script>
 
-            <!-- change display -->
+            <!-- change display template -->
             <script id="change-template" type="text/x-handlers-template">
                 {{#if change}}
                 <h2>Change</h2>
 
-                <div class="well">
+                <div>
                     {{#each change}}
                     <div>
                         {{#each this}}
@@ -75,15 +100,9 @@
                 {{/if}}
             </script>
 
-            <div class="row">
-                <div id="picker" class="col-md-4"></div>
-                <div id="expense" class="col-md-4"></div>
-                <div id="change" class="col-md-4"></div>
-            </div>
-
             <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.3/handlebars.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
             <script src="kaikeikun.js"></script>
         </div>
