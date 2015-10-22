@@ -41,13 +41,13 @@
                 </div>
             </script>
 
-            <!-- payment display -->
-            <script id="payment-template" type="text/x-handlers-template">
-                {{#if payment}}
-                <h2>Payment</h2>
+            <!-- expense display -->
+            <script id="expense-template" type="text/x-handlers-template">
+                {{#if expense}}
+                <h2>Expense{{#if bonus}}&nbsp;<small>+{{bonus}}&yen;</small>{{/if}}</h2>
 
                 <div class="well">
-                    {{#each payment}}
+                    {{#each expense}}
                     <div>
                         {{#each this}}
                         <img src="{{this}}" class="img-thumbnail" alt>
@@ -77,7 +77,7 @@
 
             <div class="row">
                 <div id="picker" class="col-md-4"></div>
-                <div id="payment" class="col-md-4"></div>
+                <div id="expense" class="col-md-4"></div>
                 <div id="change" class="col-md-4"></div>
             </div>
 

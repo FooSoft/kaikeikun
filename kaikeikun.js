@@ -135,12 +135,12 @@
         });
     }
 
-    function displayPayment(payment) {
-        var template = Handlebars.compile($('#payment-template').html());
-        $('#payment').slideUp(function() {
-            $('#payment').empty();
-            $('#payment').append(template({payment: payment}));
-            $('#payment').slideDown();
+    function displayExpense(expense, bonus) {
+        var template = Handlebars.compile($('#expense-template').html());
+        $('#expense').slideUp(function() {
+            $('#expense').empty();
+            $('#expense').append(template({expense: expense, bonus: bonus}));
+            $('#expense').slideDown();
         });
     }
 
@@ -211,32 +211,28 @@
         var wallet     = pickerToWallet();
         var aggressive = $('#aggressive').is(':checked');
 
-        var paymentList = [];
-        var changeList  = [];
+        var payment    = makePayment(total, _yen, wallet, aggressive);
+        var expenseSum = walletCoinSum(payment.expense);
+        var changeSum  = walletCoinSum(payment.expense) - total;
+        var change     = bestCoinChange(changeSum, _yen);
 
-        var details = makePayment(total, _yen, wallet, aggressive);
-        if (details !== null) {
-            var difference = walletCoinSum(details.expense) - total;
-            var change     = bestCoinChange(difference, _yen);
+        var changeList  = buildCoinListing(_yen, change);
+        var expenseList = buildCoinListing(_yen, payment.expense);
 
-            changeList  = buildCoinListing(_yen, change);
-            paymentList = buildCoinListing(_yen, details.expense);
-
-            if (deduct) {
-                for (var i in details.expense) {
-                    wallet[i] -= details.expense[i];
-                }
-
-                for (var j in change) {
-                    wallet[j] += change[j];
-                }
-
-                walletToPicker(wallet);
-                $('#total').val(0);
+        if (deduct) {
+            for (var i in payment.expense) {
+                wallet[i] -= payment.expense[i];
             }
+
+            for (var j in change) {
+                wallet[j] += change[j];
+            }
+
+            walletToPicker(wallet);
+            $('#total').val(0);
         }
 
-        displayPayment(paymentList);
+        displayExpense(expenseList, payment.expense[_yen.paper] * _yen.paper);
         displayChange(changeList);
     };
 
